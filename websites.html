@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pages</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <form action="Add_Website.php" method="POST" enctype="multipart/form-data">
+        <table border="0" width="55%" align="center" cellspacing="10">
+            <br><br><br>
+            <tr>
+                <td><h2>Website Title</h2></td>
+                <td><input type="text" name="website_title" required></td>
+            </tr>
+            <tr>
+                <td><h2>Website Link</h2></td>
+                <td><input type="text" name="website_link" required></td>
+            </tr>
+            <tr>
+                <td><h2>Website Keywords</h2></td>
+                <td><input type="text" name="website_keywords" required></td>
+            </tr>
+            <tr>
+                <td><h2>Website Description</h2></td>
+                <td><textarea name="website_description" id="description" required></textarea></td>
+            </tr>
+            <tr>
+                <td><h2>Website Images</h2></td>
+                <td><input type="file" name="Upload_Image" required></td>
+            </tr>
+            <tr>
+                <td colspan="2" align="center"> 
+                    <input type="submit" name="Add_Website" id="Website_Button_1">
+                    &nbsp; &nbsp;
+                    <input type="reset" name="reset" id="Website_Button_2">
+                </td>
+            </tr>
+        </table>
+    </form>
+</body>
+</html>

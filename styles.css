@@ -1,0 +1,58 @@
+body {
+    background-color: #1c1c1c; /* Dark background color */
+    color: #ffffff; /* Light text color for contrast */
+    font-family: Arial, sans-serif;
+}
+
+h1, h2 {
+    color: #ffffff; /* Light text color for headings */
+}
+
+input[type="text"], textarea, input[type="file"] {
+    width: 600px;
+    height: 35px;
+    background-color: #333333; /* Dark background for input fields */
+    color: #ffffff; /* Light text color for input fields */
+    border: 1px solid #555555; /* Border color for input fields */
+    border-radius: 5px;
+    padding: 5px; /* Add padding for better appearance */
+}
+
+textarea {
+    height: 100px; /* Specific height for textarea */
+}
+
+input[type="submit"], input[type="reset"] {
+    width: 200px;
+    height: 35px;
+    border-radius: 5px;
+    background-color: #444444; /* Dark background for buttons */
+    color: #ffffff; /* Light text color for buttons */
+    font-size: large;
+    border: 1px solid #555555; /* Border color for buttons */
+    cursor: pointer;
+}
+
+#Website_Button_1 {
+    background-color: white; /* Green background for submit button */
+    border: 1px solid #4CAF50;
+    color: #45a049;
+}
+
+#Website_Button_1:hover {
+    background-color: #45a049; /* Darker green for hover effect */
+    border: 1px solid #45a049;
+    color: white;
+}
+
+#Website_Button_2 {
+    background-color: white; /* Red background for reset button */
+    border: 1px solid #f44336;
+    color: red;
+}
+
+#Website_Button_2:hover {
+    background-color: #da190b; /* Darker red for hover effect */
+    border: 1px solid #da190b;
+    color: white;
+}
