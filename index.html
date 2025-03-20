@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head>
+  <meta charset="UTF-8">
+  <title>AG | Horizons</title>
+  <link rel="stylesheet" href="Styles.css">
+</head>
+<body>
+    <header>
+    <div class="right-align">
+        <button onclick="window.location.href='https://accounts.google.com/Login';" class="Login_Button">Login</button>
+          </div> 
+    </header>  
+          
+    <div class="container">
+
+    <br><br><br><br>
+            
+    <center> <img src="Logo.png" alt="" width="35%"> </center>
+    
+    <br><br><br><br>  
+  
+    <form id="searchForm" action="https://www.google.com/search" method="GET">
+      <div class="search-box">
+        <input type="text" name="q" placeholder="Search Google or type a query..." required>
+        <input type="submit" value="Search">
+      </div>
+    </form>
+  </div>
+    <script>
+    document.getElementById("searchForm").addEventListener("submit", function(e) {
+      console.log("Searching for:", this.q.value);
+    });
+  </script>
+</body>
+</html>
