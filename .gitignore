@@ -1,0 +1,73 @@
+# Ignore node modules
+node_modules/
+
+# Build outputs
+/dist/
+/build/
+/out/
+/coverage/
+/.cache/
+
+# Environment and secret files
+.env
+.env*
+!.env.example
+
+# Firebase config & local debug
+firebase-config.js
+firebase-config.js.bak
+firebase-config.js.old
+firebase-debug.log
+.firebase/
+
+# Google/Apple service config
+google-services.json
+GoogleService-Info.plist
+
+# Service account / credentials
+serviceAccountKey.json
+service-account.json
+credentials.json
+secrets.json
+
+# Certificate / key files
+*.key
+*.pem
+*.p12
+*.crt
+*.jks
+*.pfx
+
+# Logs, temp files, backups
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+*.tmp
+*.bak
+*.old
+*~
+*.swp
+*.swo
+
+# IDE / editor
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Misc
+reports/
+.envrc
+
+# NOTE: If you already committed secrets or config files, remove them from git and rotate keys:
+#   git rm --cached <file>
+#   git commit -m "remove sensitive file"
+#   (then rotate/replace the exposed keys)

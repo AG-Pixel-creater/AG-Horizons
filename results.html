@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>AG | Horizons - Search Results</title>
+        <script>
+            // Apply saved theme early to avoid flash
+            (function(){
+                try{
+                    var t = localStorage.getItem('ag_theme') || 'dark';
+                    if(t === 'light') document.documentElement.classList.add('light-theme');
+                }catch(e){}
+            })();
+        </script>
+        <link rel="stylesheet" href="src/css/styles.css">
+        <link rel="icon" href="https://raw.githubusercontent.com/AG-Pixel-creater/Images/refs/heads/main/Screenshot_2025-07-23_000307-removebg-preview.png" type="logo.png">
+    </head>
+    <body>
+        <header>
+            <div class="search-container">
+                <nav>
+                    <a href="index.html">
+                        <img src="https://raw.githubusercontent.com/AG-Pixel-creater/Images/refs/heads/main/Screenshot_2025-07-23_000307-removebg-preview.png" alt="AG Horizons" width="100px">
+                    </a> 
+                </nav>
+                <div class="search-box">
+                    <div id="Search-Emoji">🔍</div>
+                    <input type="text" id="searchInput" placeholder="Search...">
+                    <button id="searchButton">Search</button>
+                </div>
+                <div class="filter-box" style="text-align:center;margin-top:8px;">
+                    <button type="button" id="filterAll" class="filter-btn active">All</button>
+                    <button type="button" id="filterWebsites" class="filter-btn">Websites</button>
+                    <button type="button" id="filterImages" class="filter-btn">Images</button>
+                    <button type="button" id="filterVideos" class="filter-btn">Videos</button>
+                    <!-- Settings button -->
+                    <button id="settingsBtn" class="settings-btn" title="Settings">
+                        <svg width="20" height="20" viewBox="0 0 20 20">
+                            <path fill="currentColor" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"/>
+                        </svg>
+                    </button>
+                    <div id="settingsPanel" style="display:none; position: absolute; right: 12px; top: 68px; background: var(--card-bg); border:1px solid var(--border); padding:10px; border-radius:6px; z-index:1002; min-width:200px;">
+                        <div style="font-weight:600;margin-bottom:6px;color:var(--muted)">Appearance</div>
+                        <label style="display:block;margin-bottom:6px;"><input type="radio" name="theme" id="themeDark" value="dark"> Dark (recommended)</label>
+                        <label style="display:block;margin-bottom:6px;"><input type="radio" name="theme" id="themeLight" value="light"> Light</label>
+                        <div style="font-size:12px;color:var(--muted);margin-top:6px">Theme saved to your browser.</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <!-- Loader shown while searching -->
+            <div id="resultsLoader" class="results-loader" aria-hidden="true" role="status" style="display:none;">
+                <div class="spinner" aria-hidden="true"></div>
+                <div class="loader-text">Loading results...</div>
+            </div>
+
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+
+            <div class="results-grid" id="searchResults">
+                <!-- Search results will be displayed here -->
+            </div>
+        </main>
+
+        <footer>    
+            <!-- <p>&copy; 2025 AG Horizons</p> -->
+        </footer>
+
+        <!-- Load Firebase SDK first -->
+        <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+        <!-- Then load our initialization -->
+        <script src="src/js/firebase-config.js"></script>
+
+        <!-- Finally load application logic -->
+        <script src="src/js/results.js"></script>
+        <!-- Theme settings handler -->
+        <script>
+            (function(){
+                const THEME_KEY = 'ag_theme';
+                function applyTheme(t){
+                    if(t === 'light') document.documentElement.classList.add('light-theme');
+                    else document.documentElement.classList.remove('light-theme');
+                }
+
+                // initialize from storage
+                const storedTheme = localStorage.getItem(THEME_KEY) || 'dark';
+                applyTheme(storedTheme);
+
+                const panel = document.getElementById('settingsPanel');
+                const btn = document.getElementById('settingsBtn');
+                const darkRadio = document.getElementById('themeDark');
+                const lightRadio = document.getElementById('themeLight');
+
+                // reflect current state in radios
+                if(darkRadio) darkRadio.checked = (storedTheme === 'dark');
+                if(lightRadio) lightRadio.checked = (storedTheme === 'light');
+
+                // toggle panel visibility
+                if(btn && panel){
+                    btn.addEventListener('click', (e) => {
+                        const open = panel.style.display === 'block';
+                        panel.style.display = open ? 'none' : 'block';
+                        btn.setAttribute('aria-expanded', String(!open));
+                    });
+                }
+
+                // radio change handlers
+                if(darkRadio) darkRadio.addEventListener('change', () => {
+                    if(darkRadio.checked){
+                        applyTheme('dark');
+                        localStorage.setItem(THEME_KEY, 'dark');
+                    }
+                });
+                if(lightRadio) lightRadio.addEventListener('change', () => {
+                    if(lightRadio.checked){
+                        applyTheme('light');
+                        localStorage.setItem(THEME_KEY, 'light');
+                    }
+                });
+
+                // close panel on outside click
+                document.addEventListener('click', (e) => {
+                    if(!panel) return;
+                    if(panel.style.display !== 'block') return;
+                    if(e.target === panel || panel.contains(e.target) || e.target === btn) return;
+                    panel.style.display = 'none';
+                    if(btn) btn.setAttribute('aria-expanded', 'false');
+                });
+            })();
+        </script>
+        
+            <!-- Inline DOM sweep: replace any legacy local PNG default-thumbnail requests with an external placeholder
+                 This runs early to prevent the browser requesting /src/images/default-thumbnail.png and generating 404 spam.
+                 It will not change or remove valid external URLs. -->
+            <script>
+                (function(){
+                    try {
+                        const placeholder = 'https://via.placeholder.com/400x300?text=No+Image';
+                        // Replace any existing <img> elements that reference the legacy local PNG
+                        document.querySelectorAll('img[src*="default-thumbnail.png"]').forEach(img => {
+                            try {
+                                console.debug('Replacing legacy image src on page load:', img.src);
+                                img.src = placeholder;
+                            } catch(e) { console.warn('Failed to replace legacy img src', e); }
+                        });
+                        // Also make a runtime hook for any scripts that add elements before our results renderer runs
+                        const observer = new MutationObserver((mutations) => {
+                            for (const m of mutations) {
+                                for (const node of m.addedNodes) {
+                                    if (node && node.querySelectorAll) {
+                                        node.querySelectorAll('img[src*="default-thumbnail.png"]').forEach(img => {
+                                            try { img.src = placeholder; } catch(e) {}
+                                        });
+                                    } else if (node && node.tagName === 'IMG' && node.src && node.src.indexOf('default-thumbnail.png') !== -1) {
+                                        try { node.src = placeholder; } catch(e) {}
+                                    }
+                                }
+                            }
+                        });
+                        observer.observe(document.documentElement || document.body, { childList: true, subtree: true });
+                        // Stop observing after 10s to avoid long-running observers
+                        setTimeout(() => observer.disconnect(), 10000);
+                    } catch(e) { console.warn('DOM-sweep init failed', e); }
+                })();
+            </script>
+
+        <!-- Results scroll helpers: compute max-height and inject up/down buttons -->
+        <script>
+            (function(){
+                const grid = document.getElementById('searchResults');
+                if(!grid) return;
+
+                function setResultsMaxHeight(){
+                    const header = document.querySelector('header');
+                    const headerH = header ? header.offsetHeight : 110;
+                    const extra = 40; // breathing room
+                    const available = Math.max(200, window.innerHeight - headerH - extra);
+                    grid.style.maxHeight = available + 'px';
+                }
+
+                // create controls
+                const topBtn = document.createElement('button');
+                topBtn.className = 'results-scroll-btn results-scroll-top';
+                topBtn.type = 'button';
+                topBtn.title = 'Scroll up';
+                topBtn.innerText = '▲';
+
+                const botBtn = document.createElement('button');
+                botBtn.className = 'results-scroll-btn results-scroll-bottom';
+                botBtn.type = 'button';
+                botBtn.title = 'Scroll down';
+                botBtn.innerText = '▼';
+
+                // append to grid (positioned absolutely)
+                grid.appendChild(topBtn);
+                grid.appendChild(botBtn);
+
+                function updateButtons(){
+                    const max = grid.scrollHeight - grid.clientHeight;
+                    if(max <= 4){ topBtn.style.display = 'none'; botBtn.style.display = 'none'; return; }
+                    topBtn.style.display = grid.scrollTop > 8 ? 'flex' : 'none';
+                    botBtn.style.display = grid.scrollTop < (max - 8) ? 'flex' : 'none';
+                }
+
+                topBtn.addEventListener('click', ()=> grid.scrollBy({ top: -320, behavior: 'smooth' }));
+                botBtn.addEventListener('click', ()=> grid.scrollBy({ top: 320, behavior: 'smooth' }));
+
+                grid.addEventListener('scroll', updateButtons, { passive: true });
+
+                // watch for content changes to update buttons and max-height
+                const mo = new MutationObserver(()=> { setTimeout(()=>{ setResultsMaxHeight(); updateButtons(); }, 60); });
+                mo.observe(grid, { childList: true, subtree: true });
+
+                window.addEventListener('resize', () => { setResultsMaxHeight(); updateButtons(); });
+
+                // initial
+                setResultsMaxHeight();
+                // delay to allow results.js to render initial results
+                setTimeout(updateButtons, 300);
+            })();
+        </script>
+
+    </body>
+</html>

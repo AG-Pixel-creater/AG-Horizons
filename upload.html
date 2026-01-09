@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Website - Firebase</title>
+    <script>
+        // Apply saved theme early to avoid flash
+        (function(){
+            try{
+                var t = localStorage.getItem('ag_theme') || 'dark';
+                if(t === 'light') document.documentElement.classList.add('light-theme');
+            }catch(e){}
+        })();
+    </script>
+    <link rel="stylesheet" href="src/css/upload.css">
+    <link rel="icon" href="https://raw.githubusercontent.com/AG-Pixel-creater/Images/refs/heads/main/Screenshot_2025-07-23_000307-removebg-preview.png" type="logo.png">
+</head>
+<body>
+    <div class="upload-wrap">
+        <aside class="sidebar">
+            <button id="uploadSiteBtn" class="active">Upload Website</button>
+            <button id="uploadImageBtn">Upload Image</button>
+            <button id="uploadVideoBtn">Upload Video</button>
+        </aside>
+        <main class="content">
+            <div id="websitePanel" class="panel">
+                <h1>Add Websites</h1>
+                <form id="websiteForm">
+                    <div class="form-group">
+                        <label for="website_title">Website Title:</label>
+                        <input type="text" id="website_title" name="website_title" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="website_link">Website Link:</label>
+                        <input type="url" id="website_link" name="website_link" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="website_keywords">Website Keywords (comma separated):</label>
+                        <input type="text" id="website_keywords" name="website_keywords" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="website_description">Website Description:</label>
+                        <textarea id="website_description" name="website_description" rows="4" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="upload_image">Upload Image:</label>
+                        <div>
+                            <input type="url" id="image_url" name="image_url" placeholder="https://example.com/image.jpg">
+                            <button type="button" id="previewImageButton">Preview Image</button>
+                        </div>
+                        <div id="imagePreview" style="margin-top:8px"></div>
+                    </div>
+
+                    <fieldset style="margin-top:12px;">
+                        <legend>Company information</legend>
+                        <label><input type="checkbox" id="isCompanyCheckbox"> This is a company</label>
+                        <div id="companyNameWrap" style="display:none;margin-top:8px;">
+                            <label for="company_name">Company name</label>
+                            <input type="text" id="company_name" name="company_name" placeholder="Company LLC">
+                        </div>
+                        <div id="siteTypeWrap" style="margin-top:8px;">
+                            <label for="site_type">If not a company, choose type</label>
+                            <select id="site_type" name="site_type">
+                                <option value="">-- select type --</option>
+                                <option value="Islamic">Islamic</option>
+                                <option value="Portfolio">Portfolio</option>
+                                <option value="Blog">Blog</option>
+                                <option value="Store">Store</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </fieldset>
+
+                    <button type="submit">➕ Add Website</button>
+                </form>
+            </div>
+
+            <div id="imagePanel" class="panel hidden">
+                <h1>Upload Image</h1>
+                <form id="imageForm">
+                    <div class="form-group">
+                        <label for="image_file_img">Image (file or URL) <small>(image is required)</small>:</label>
+                        <input type="file" id="image_file_img" name="image_file_img" accept="image/*">
+                        <div style="margin-top:8px">
+                            <input type="url" id="image_url_img" name="image_url_img" placeholder="https://example.com/image.jpg">
+                            <button type="button" id="previewImageButtonImg">Preview Image</button>
+                        </div>
+                        <div id="imagePreviewImg" style="margin-top:8px"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="image_title">Title (this will be shown as a link):</label>
+                        <input type="text" id="image_title" name="image_title" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="image_title_link">Title Link (URL):</label>
+                        <input type="url" id="image_title_link" name="image_title_link" placeholder="https://example.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="image_description">Description:</label>
+                        <textarea id="image_description" name="image_description" rows="3"></textarea>
+                    </div>
+
+                    <fieldset style="margin-top:12px;">
+                        <legend>Company information</legend>
+                        <label><input type="checkbox" id="isCompanyCheckbox"> This is a company</label>
+                        <div id="companyNameWrap" style="display:none;margin-top:8px;">
+                            <label for="company_name">Company name</label>
+                            <input type="text" id="company_name" name="company_name" placeholder="Company LLC">
+                        </div>
+                        <div id="siteTypeWrap" style="margin-top:8px;">
+                            <label for="site_type">If not a company, choose type</label>
+                            <select id="site_type" name="site_type">
+                                <option value="">-- select type --</option>
+                                <option value="Islamic">Islamic</option>
+                                <option value="Portfolio">Portfolio</option>
+                                <option value="Blog">Blog</option>
+                                <option value="Store">Store</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </fieldset>
+
+                    <button type="submit">➕ Add Image</button>
+                </form>
+
+                <div style="margin-top:12px;">
+                    <strong>Preview:</strong>
+                    <div id="imageCardPreview" style="margin-top:8px; padding:8px; border:1px solid #333; border-radius:6px;">
+                        <!-- image card preview renders here -->
+                    </div>
+                </div>
+            </div>
+
+            <div id="videoPanel" class="panel hidden">
+                <h1>Upload Video</h1>
+                <form id="videoForm">
+                    <div class="form-group">
+                        <label for="video_file">Video (file or URL) <small>(required)</small>:</label>
+                        <input type="file" id="video_file" name="video_file" accept="video/*">
+                        <div style="margin-top:8px">
+                            <input type="url" id="video_url" name="video_url" placeholder="https://example.com/video.mp4 or YouTube link">
+                            <button type="button" id="previewVideoButton">Preview Video</button>
+                        </div>
+                        <div id="videoPreview" style="margin-top:8px"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="video_title">Title (this will be shown as a link):</label>
+                        <input type="text" id="video_title" name="video_title" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="video_title_link">Title Link (URL):</label>
+                        <input type="url" id="video_title_link" name="video_title_link" placeholder="https://example.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="video_description">Description:</label>
+                        <textarea id="video_description" name="video_description" rows="3"></textarea>
+                    </div>
+
+                    <fieldset style="margin-top:12px;">
+                        <legend>Company information</legend>
+                        <label><input type="checkbox" id="isCompanyCheckbox"> This is a company</label>
+                        <div id="companyNameWrap" style="display:none;margin-top:8px;">
+                            <label for="company_name">Company name</label>
+                            <input type="text" id="company_name" name="company_name" placeholder="Company LLC">
+                        </div>
+                        <div id="siteTypeWrap" style="margin-top:8px;">
+                            <label for="site_type">If not a company, choose type</label>
+                            <select id="site_type" name="site_type">
+                                <option value="">-- select type --</option>
+                                <option value="Islamic">Islamic</option>
+                                <option value="Portfolio">Portfolio</option>
+                                <option value="Blog">Blog</option>
+                                <option value="Store">Store</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </fieldset>
+
+                    <button type="submit">➕ Add Video</button>
+                </form>
+
+                <div style="margin-top:12px;">
+                    <strong>Preview:</strong>
+                    <div id="videoCardPreview" style="margin-top:8px; padding:8px; border:1px solid #333; border-radius:6px;">
+                        <!-- video card preview renders here -->
+                    </div>
+                </div>
+            </div>
+
+            <div id="message"></div>
+        </main>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    
+    <script src="src/js/firebase-config.js"></script>
+    <script src="src/js/upload.js"></script>
+</body>
+</html>

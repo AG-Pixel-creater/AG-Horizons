@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AG | Horizons</title>
+    <script>
+        // Apply saved theme early to avoid flash
+        (function(){
+            try{
+                var t = localStorage.getItem('ag_theme') || 'dark';
+                if(t === 'light') document.documentElement.classList.add('light-theme');
+            }catch(e){}
+        })();
+    </script>
+    <link rel="stylesheet" href="src/css/styles.css">
+    <link rel="icon" href="https://raw.githubusercontent.com/AG-Pixel-creater/Images/refs/heads/main/Screenshot_2025-07-23_000307-removebg-preview.png" type="logo.png">
+</head>
+<body>
+    <header>
+    <div class="login" align="right">
+        <button onclick="window.location.href='https://accounts.google.com/Login';" class="Login_Button" align="right">Login</button>
+        <button onclick="window.location.href='https://accounts.google.com/SignUp';" class="Login_Button" align="right">Sign Up</button>
+    </div>
+    
+    <div class="Header-Controls">
+        <!-- <button onclick="window.location.href='upload.html';" class="Add-site-btn" alt="Tap-if-you-want-to-add-your-site">Add Site</button> -->
+        <button id="settingsBtn" class="settings-btn" title="Settings">
+            <svg width="20" height="20" viewBox="0 0 20 20">
+                <path fill="currentColor" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"/>
+            </svg>
+        </button>
+
+    </div> 
+    
+    <div class="digital-clock" id="digitalClock">
+        <div class="date-section">
+            <span class="day">Mon</span>
+            <span class="date">01 Jan</span>
+        </div>
+        <div class="time-section">
+            <span class="hours">00</span>
+            <span class="colon">:</span>
+            <span class="minutes">00</span>
+            <span class="colon">:</span>
+            <span class="seconds">00</span>
+            <span class="ampm">AM</span>
+        </div>
+    </div>
+    </header>  
+          
+    <div class="container">
+        
+        <br><br><br><br>
+        
+        <center> <img src="https://raw.githubusercontent.com/AG-Pixel-creater/Images/refs/heads/main/Screenshot_2025-07-23_000307-removebg-preview.png" alt="Logo" class="logo"> </center>
+        
+        <br><br><br><br>  
+        
+        <form id="searchForm" action="results.html" method="GET">
+            <div class="search-box">
+                <div id="Search-Emoji">🔍</div>
+                <input type="text" name="q" placeholder="Search..." required>
+                <button type="submit" id="searchButton">Search</button>
+            </div>
+        </form>
+        
+        
+        <div class="Circular_Container_1">
+            <!-- <a href="https://ag-pixel-creater.github.io/AG-Home/">
+                        <img src="https://raw.githubusercontent.com/AG-Pixel-creater/Images/refs/heads/main/Screenshot_2025-04-03_063111-removebg-preview.png" alt="AG" width="100px">
+                    </a>  -->
+
+            <div class="Circular_Container_3"></div>
+
+        </div>
+        <div class="Circular_Container_2">
+            
+            <!-- Youtube SVG -->
+
+            <div class="youtube-container" id="social-icon" onclick="redirectToYouTube()">
+                <svg class="youtube-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- YouTube Logo SVG -->
+                    <path d="M19.67 7.52C19.58 7.16 19.41 6.83 19.17 6.55C18.92 6.27 18.61 6.05 18.26 5.91C17.15 5.5 12 5.5 12 5.5C12 5.5 6.85 5.5 5.74 5.91C5.39 6.05 5.08 6.27 4.83 6.55C4.59 6.83 4.42 7.16 4.33 7.52C4 8.83 4 11.5 4 11.5C4 11.5 4 14.17 4.33 15.48C4.42 15.84 4.59 16.17 4.83 16.45C5.08 16.73 5.39 16.95 5.74 17.09C6.85 17.5 12 17.5 12 17.5C12 17.5 17.15 17.5 18.26 17.09C18.61 16.95 18.92 16.73 19.17 16.45C19.41 16.17 19.58 15.84 19.67 15.48C20 14.17 20 11.5 20 11.5C20 11.5 20 8.83 19.67 7.52Z" fill="#FF0000"/>
+                    <path d="M10 15L15 12L10 9V15Z" fill="white"/>
+                </svg>
+            </div>
+
+            <!-- Instagram SVG -->
+
+            <div class="instagram-container" id="social-icon" onclick="redirectToInstagram()">
+                <svg class="instagram-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Instagram Logo - Solid Color -->
+                    <path d="M7.75 2H16.25C19.425 2 22 4.575 22 7.75V16.25C22 19.425 19.425 22 16.25 22H7.75C4.575 22 2 19.425 2 16.25V7.75C2 4.575 4.575 2 7.75 2Z" stroke="#E1306C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12 15.75C14.0711 15.75 15.75 14.0711 15.75 12C15.75 9.92893 14.0711 8.25 12 8.25C9.92893 8.25 8.25 9.92893 8.25 12C8.25 14.0711 9.92893 15.75 12 15.75Z" stroke="#E1306C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M17.25 6.75H17.26" stroke="#E1306C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            
+            <!-- TikTok SVG -->
+
+            <div class="tiktok-container" id="social-icon" onclick="redirectToTikTok()">
+                <svg class="tiktok-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- TikTok Logo SVG -->
+                    <path d="M18.115 5.074C17.381 4.252 16.932 3.187 16.932 2.026H13.845V14.401C13.819 15.933 12.583 17.169 11.051 17.169C9.519 17.169 8.283 15.933 8.283 14.401C8.283 12.869 9.519 11.633 11.051 11.633C11.355 11.633 11.647 11.683 11.924 11.774V8.623C11.608 8.576 11.285 8.551 10.957 8.551C7.711 8.551 5.074 11.188 5.074 14.434C5.074 17.68 7.711 20.317 10.957 20.317C14.203 20.317 16.84 17.68 16.84 14.434V8.059C18.274 9.168 20.043 9.826 21.947 9.826V6.739C20.259 6.739 18.716 6.092 18.115 5.074Z" fill="#000000"/>
+                    <path d="M13.845 2.026V3.526C15.377 3.526 16.613 4.762 16.613 6.294C16.613 6.598 16.563 6.89 16.472 7.167C17.294 6.433 18.359 5.984 19.52 5.984H21.02V2.026H13.845Z" fill="#00F2EA"/>
+                    <path d="M16.932 2.026C16.932 3.187 17.381 4.252 18.115 5.074C18.716 6.092 20.259 6.739 21.947 6.739V5.239C20.415 5.239 19.179 4.003 19.179 2.471C19.179 2.167 19.229 1.875 19.32 1.598C18.498 2.332 17.433 2.781 16.272 2.781H14.772V2.026H16.932Z" fill="#FF004F"/>
+                </svg>
+            </div>
+
+            <!-- Github SVG -->
+
+            <div class="github-container" id="social-icon" onclick="redirectToGitHub()">
+                <svg class="github-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- GitHub Simple Version -->
+                    <path d="M12 0C5.37 0 0 5.37 0 12C0 17.31 3.435 21.795 8.205 23.385C8.805 23.49 9.03 23.13 9.03 22.815C9.03 22.53 9.015 21.585 9.015 20.55C6 21.135 5.22 19.845 4.98 19.17C4.845 18.825 4.26 17.76 3.75 17.475C3.33 17.25 2.73 16.665 3.735 16.65C4.68 16.635 5.355 17.55 5.58 17.91C6.66 19.725 8.385 19.215 9.075 18.9C9.18 18.12 9.495 17.595 9.84 17.295C7.17 16.995 4.38 15.96 4.38 11.37C4.38 10.065 4.845 8.985 5.61 8.145C5.49 7.845 5.07 6.615 5.73 4.965C5.73 4.965 6.735 4.65 9.03 6.195C9.99 5.925 11.01 5.79 12.03 5.79C13.05 5.79 14.07 5.925 15.03 6.195C17.325 4.635 18.33 4.965 18.33 4.965C18.99 6.615 18.57 7.845 18.45 8.145C19.215 8.985 19.68 10.065 19.68 11.37C19.68 15.975 16.875 16.995 14.205 17.295C14.64 17.67 15.015 18.39 15.015 19.515C15.015 21.12 15 22.41 15 22.815C15 23.13 15.225 23.505 15.825 23.385C20.565 21.795 24 17.295 24 12C24 5.37 18.63 0 12 0Z" fill="#333333"/>
+                </svg>
+            </div>
+
+            <!-- LinkdIn SVG -->
+
+            <div class="linkedin-container" id="social-icon" onclick="redirectToLinkedIn()">
+                <svg class="linkedin-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- LinkedIn Logo SVG -->
+                    <path d="M19 3C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19Z" fill="#0077B5"/>
+                    <path d="M8 9.5C8.82843 9.5 9.5 8.82843 9.5 8C9.5 7.17157 8.82843 6.5 8 6.5C7.17157 6.5 6.5 7.17157 6.5 8C6.5 8.82843 7.17157 9.5 8 9.5Z" fill="white"/>
+                    <path d="M6.5 10.5H9.5V17.5H6.5V10.5Z" fill="white"/>
+                    <path d="M13 10.5H16V11.5H16V17.5H13V11.5C13 10.9477 13.4477 10.5 14 10.5H15C15.5523 10.5 16 10.9477 16 11.5V17.5H13V10.5Z" fill="white"/>
+                    <path d="M13 10.5C13 10.2239 13.2239 10 13.5 10H15.5C15.7761 10 16 10.2239 16 10.5V11.5C16 11.7761 15.7761 12 15.5 12H13.5C13.2239 12 13 11.7761 13 11.5V10.5Z" fill="#0077B5"/>
+                </svg>
+            </div>
+
+            <!-- DeepSeek with actual logo -->
+            <div class="deepseek-container" id="social-icon" onclick="redirectToDeepSeek()">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREA-Su0tPGqM1_i1LA2W2lUrP214eW3IA05A&s" 
+                    alt="DeepSeek" 
+                    style="width: 30px; height: 30px; border-radius: 50%;">
+            </div>
+
+            <!-- ChatGPT with actual logo -->
+            <div class="chatgpt-container" id="social-icon" onclick="redirectToChatGPT()">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMdM9MEQ0ExL1PmInT3U5I8v63YXBEdoIT0Q&s" 
+                    alt="ChatGPT" 
+                    style="width: 30px; height: 30px; border-radius: 50%;">
+            </div>
+            
+            <!-- Claude AI with actual logo -->
+            <div class="claudeai-container" id="social-icon" onclick="redirectToClaude()">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Claude_AI_symbol.svg/2048px-Claude_AI_symbol.svg.png" 
+                    alt="Claude AI" 
+                    style="width: 30px; height: 30px; border-radius: 50%;">
+            </div>
+
+            <!-- Copilot AI with actual logo -->
+            <div class="copilot-container" id="social-icon" onclick="redirectToClaude()">
+                <img src="https://teaching.utoronto.ca/wp-content/uploads/Microsoft_Copilot_Icon.svg.png" 
+                    alt="Claude AI" 
+                    style="width: 30px; height: 30px; border-radius: 50%;">
+            </div>
+            
+            <div class="Gmail-container" id="social-icon" onclick="redirectToClaude()">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUmNZiASUdwHTjfJlXLBGc-P-TVxvf1d0lXQ&s" 
+                    alt="Claude AI" 
+                    style="width: 30px; height: 30px; border-radius: 50%;">
+            </div>
+            
+        </div>
+    </div>
+    <!-- AG Home -->
+    <div class="AG-Home" id="social-icon" onclick="redirectToAG_Home()">
+        <img src="https://raw.githubusercontent.com/AG-Pixel-creater/Images/refs/heads/main/Screenshot_2025-04-03_063111-removebg-preview.png" 
+            alt="AG Home" 
+            style="width: 30px; height: 30px; border-radius: 50%;">
+    </div>
+
+    <div id="settingsModal" class="modal hidden">
+            <div class="modal-content" align="center">
+                <h2>Settings</h2>
+                <div class="theme-selector" align="center">
+                    <h3>Theme</h3>
+                    <button class="theme-btn" data-theme="light">Light</button>
+                    <button class="theme-btn" data-theme="dark">Dark</button>
+                </div>
+                <div align="center">
+                    <button id="closeSettings" class="close-btn">Close</button>
+                </div>
+            </div>
+        </div>
+    
+    <!-- Load scripts in correct order -->
+    <!-- 1. Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
+    <!-- 2. Firebase Configuration -->
+    <script src="src/js/firebase-config.js"></script>
+    
+    <!-- 3. Application Logic -->
+    <script>
+        function redirectToYouTube() {
+            window.open('https://www.youtube.com', '_blank');
+        }
+
+        function redirectToInstagram() {
+            window.open('https://www.instagram.com/ag_pixel_creater/', '_blank');
+        }
+        
+        function redirectToTikTok() {
+            window.open('https://tiktok.com', '_blank');
+        }
+
+        function redirectToGitHub() {
+            window.open('https://github.com', '_blank');
+        }
+
+        function redirectToLinkedIn() {
+            window.open('https://linkedin.com', '_blank');
+        }
+
+        function redirectToDeepSeek() {
+            window.open('https://deepseek.com', '_blank');
+        }
+
+        function redirectToChatGPT() {
+            window.open('https://chat.openai.com', '_blank');
+        }
+        
+        function redirectToClaude() {
+            window.open('https://claude.ai/new', '_blank');
+        }
+        
+        function redirectToCopilot() {
+            window.open('https://copilot.microsoft.com/', '_blank');
+        }
+        
+        function redirectToGmail() {
+            window.open('https://mail.google.com', '_blank');
+        }
+        
+        function redirectToAG_Home() {
+            window.open('https://ag-pixel-creater.github.io/AG-Home/', '_blank');
+        }
+
+        function updateDigitalClock() {
+        const now = new Date();
+        
+        // Time
+        let hours = now.getHours();
+        let minutes = now.getMinutes();
+        let seconds = now.getSeconds();
+        let ampm = hours >= 12 ? 'PM' : 'AM';
+        
+        // Date
+        const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        
+        let day = days[now.getDay()];
+        let date = now.getDate();
+        let month = months[now.getMonth()];
+        
+        // Convert to 12-hour format
+        hours = hours % 12;
+        hours = hours ? hours : 12; // 0 should be 12
+        
+        // Add leading zeros
+        hours = hours.toString().padStart(2, '0');
+        minutes = minutes.toString().padStart(2, '0');
+        seconds = seconds.toString().padStart(2, '0');
+        date = date.toString().padStart(2, '0');
+        
+        // Update DOM
+        document.querySelector('.hours').textContent = hours;
+        document.querySelector('.minutes').textContent = minutes;
+        document.querySelector('.seconds').textContent = seconds;
+        document.querySelector('.ampm').textContent = ampm;
+        document.querySelector('.day').textContent = day;
+        document.querySelector('.date').textContent = `${date} ${month}`;
+    }
+
+    // Update every second
+    setInterval(updateDigitalClock, 1000);
+
+    // Initial call
+    updateDigitalClock();
+
+        // Wait for DOM and scripts to load
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById("searchForm").addEventListener("submit", async function(e) {
+                e.preventDefault();
+                const searchQuery = this.q.value.trim().toLowerCase();
+                
+                if (!searchQuery) return;
+
+                // Store the search query
+                try {
+                    const timestamp = firebase.firestore.FieldValue.serverTimestamp();
+                    await db.collection(window.APP_CONFIG.COLLECTION_NAME).add({
+                        query: searchQuery,
+                        timestamp: timestamp
+                    });
+                    
+                    // Redirect to results page
+                    window.location.href = `results.html?q=${encodeURIComponent(searchQuery)}`;
+                } catch (error) {
+                    console.error("Error saving search:", error);
+                    // Still redirect even if saving fails
+                    window.location.href = `results.html?q=${encodeURIComponent(searchQuery)}`;
+                }
+            });
+        });
+
+        // Theme handling (unified with other pages)
+            (function(){
+                const THEME_KEY = 'ag_theme';
+                function applyTheme(t){
+                    if(t === 'light') document.documentElement.classList.add('light-theme');
+                    else document.documentElement.classList.remove('light-theme');
+                }
+
+                // init
+                const storedTheme = localStorage.getItem(THEME_KEY) || 'dark';
+                applyTheme(storedTheme);
+
+                // Settings modal
+                const settingsBtn = document.getElementById('settingsBtn');
+                const settingsModal = document.getElementById('settingsModal');
+
+                function updateActiveTheme(theme) {
+                    const themeButtons = document.querySelectorAll('.theme-btn');
+                    themeButtons.forEach(btn => {
+                        if (btn.getAttribute('data-theme') === theme) btn.classList.add('active');
+                        else btn.classList.remove('active');
+                    });
+                }
+
+                if(settingsBtn){
+                    settingsBtn.addEventListener('click', () => {
+                        if(settingsModal) settingsModal.classList.remove('hidden');
+                        updateActiveTheme(storedTheme);
+                    });
+                }
+
+                if(document.getElementById('closeSettings')){
+                    document.getElementById('closeSettings').addEventListener('click', () => {
+                        if(settingsModal) settingsModal.classList.add('hidden');
+                    });
+                }
+
+                // Theme selection buttons
+                const themeButtons = document.querySelectorAll('.theme-btn');
+                themeButtons.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const theme = btn.getAttribute('data-theme');
+                        applyTheme(theme);
+                        localStorage.setItem(THEME_KEY, theme);
+                        updateActiveTheme(theme);
+                    });
+                });
+            })();
+
+    </script>
+</body>
+</html>

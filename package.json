@@ -1,0 +1,27 @@
+{
+  "name": "ag-horizons",
+  "version": "1.0.0",
+  "description": "AG Horizons Search Application",
+  "main": "index.html",
+  "scripts": {
+    "dev": "http-server -p 3000",
+    "start": "http-server -p 3000"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AG-Pixel-creater/AG-Horizons.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AG-Pixel-creater/AG-Horizons/issues"
+  },
+  "homepage": "https://github.com/AG-Pixel-creater/AG-Horizons#readme",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "dependencies": {
+    "firebase": "^10.7.1"
+  }
+}
