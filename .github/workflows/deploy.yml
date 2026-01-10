@@ -22,7 +22,7 @@ jobs:
       - name: Create firebase-config.js from GitHub Secrets
         run: |
           mkdir -p src/js
-          cat > src/js/firebase-config.js << 'EOF'
+          cat > src/js/firebase-config.js << EOF
           // Firebase config injected from GitHub Secrets at deploy time
           const firebaseConfig = {
             apiKey: "${{ secrets.APIKEY }}",
