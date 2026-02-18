@@ -1,0 +1,164 @@
+// Firebase initialization and configuration
+(() => {
+    const LOG = "[Firebase Init]";
+    
+    // Skip if already initialized
+    if (window.db) {
+        console.log(LOG, "Already initialized");
+        return;
+    }
+
+    // Firebase Configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyDv8meJeuckYs85hG_50WD7eWIdQ5bs6cw",
+        authDomain: "ag-horizons.firebaseapp.com",
+        projectId: "ag-horizons",
+        storageBucket: "ag-horizons.firebasestorage.app",
+        messagingSenderId: "314438981115",
+        appId: "1:314438981115:web:b8c518e893547a60d2675e",
+        measurementId: "G-7VCHR8J371"
+    };
+
+    // App settings
+    window.APP_CONFIG = {
+        maxResults: 20,
+        // include websites, images and videos so search covers all content types
+        collections: ["websites", "images", "videos", "searchData"]
+    };
+
+    // Initialize Firebase
+    if (!window.firebase) {
+        console.error(LOG, "Firebase SDK not loaded");
+        return;
+    }
+
+    try {
+        // Initialize app
+        if (!window.firebase.apps.length) {
+            window.firebase.initializeApp(firebaseConfig);
+            console.log(LOG, "App initialized");
+        }
+
+        // Attempt to sign in anonymously if Auth SDK is available
+        let authReady = Promise.resolve();
+        if (window.firebase && typeof window.firebase.auth === 'function') {
+            try {
+                const auth = window.firebase.auth();
+                window.auth = auth;
+                if (!auth.currentUser) {
+                    authReady = auth.signInAnonymously().then(() => {
+                        console.log(LOG, "Signed in anonymously");
+                    }).catch(err => {
+                        console.warn(LOG, "Anonymous sign-in failed:", err);
+                    });
+                } else {
+                    console.log(LOG, "Already signed in:", auth.currentUser && auth.currentUser.uid);
+                }
+            } catch (authErr) {
+                console.warn(LOG, 'Auth init failed:', authErr);
+            }
+        } else {
+            console.warn(LOG, 'Firebase Auth SDK not loaded; skipping anonymous sign-in');
+        }
+
+        // After auth readiness, initialize Firestore and test collections
+        authReady.then(() => {
+            try {
+                const db = window.firebase.firestore();
+                window.db = db;
+
+                // Create connection promise
+                let resolveConnection, rejectConnection;
+                window.connectionReady = new Promise((resolve, reject) => {
+                    resolveConnection = resolve;
+                    rejectConnection = reject;
+                });
+
+                // Diagnostic logs to help identify mixed API usage
+                try {
+                    console.log(LOG, 'window.firebase present:', !!window.firebase, 'firebase.apps.length:', (window.firebase && window.firebase.apps && window.firebase.apps.length));
+                    console.log(LOG, 'db instance:', db);
+                    console.log(LOG, 'db.collection type:', typeof (db && db.collection));
+                } catch (diagErr) {
+                    console.warn(LOG, 'Diagnostic logging failed:', diagErr);
+                }
+
+                // Test collection access
+                Promise.all(window.APP_CONFIG.collections.map(async collName => {
+                    try {
+                        // Ensure compat-style collection call can be made
+                        if (typeof db.collection !== 'function') {
+                            console.warn(LOG, `db.collection is not a function for collection "${collName}". Attempting to obtain compat instance.`);
+                            if (window.firebase && typeof window.firebase.firestore === 'function') {
+                                try {
+                                    // Re-obtain compat firestore instance
+                                    const compatDb = window.firebase.firestore();
+                                    window.db = compatDb;
+                                    // Update local reference
+                                    const refCompat = compatDb.collection(collName);
+                                    const snap = await refCompat.limit(1).get();
+                                    console.log(LOG, `Compat collection "${collName}" is ${snap.empty ? 'empty' : 'accessible'}`);
+                                    return true;
+                                } catch (compatErr) {
+                                    console.warn(LOG, `Compat collection attempt failed for "${collName}":`, compatErr);
+                                    return false;
+                                }
+                            } else {
+                                console.warn(LOG, 'No compat firestore available to fallback to');
+                                return false;
+                            }
+                        }
+
+                        const ref = db.collection(collName);
+                        const snap = await ref.limit(1).get();
+                        console.log(LOG, `Collection "${collName}" is ${snap.empty ? "empty" : "accessible"}`);
+                        return true;
+                    } catch (err) {
+                        console.warn(LOG, `Collection "${collName}" error:`, err);
+                        return false;
+                    }
+                })).then(results => {
+                    if (results.some(r => r)) {
+                        console.log(LOG, "Successfully connected to Firestore");
+                        resolveConnection(true);
+                    } else {
+                        throw new Error("No collections accessible");
+                    }
+                }).catch(error => {
+                    console.error(LOG, "Connection failed:", error);
+                    rejectConnection(error);
+                });
+
+            } catch (error) {
+                console.error(LOG, "Initialization failed:", error);
+                const notice = document.createElement("div");
+                notice.style.cssText = "position:fixed;top:10px;right:10px;padding:10px;background:#d32f2f;color:white;border-radius:4px;z-index:9999;font-family:sans-serif";
+                notice.textContent = "Firebase initialization failed - check console";
+                document.body?.appendChild(notice);
+                setTimeout(() => notice.remove(), 8000);
+            }
+        }).catch(err => {
+            console.warn(LOG, 'Auth readiness failed:', err);
+            // fallback: initialize Firestore anyway
+            try {
+                const db = window.firebase.firestore();
+                window.db = db;
+                let resolveConnection, rejectConnection;
+                window.connectionReady = new Promise((resolve, reject) => {
+                    resolveConnection = resolve;
+                    rejectConnection = reject;
+                });
+            } catch (e) {
+                console.error(LOG, 'Fallback firestore init failed:', e);
+            }
+        });
+
+    } catch (error) {
+        console.error(LOG, "Initialization failed:", error);
+        const notice = document.createElement("div");
+        notice.style.cssText = "position:fixed;top:10px;right:10px;padding:10px;background:#d32f2f;color:white;border-radius:4px;z-index:9999;font-family:sans-serif";
+        notice.textContent = "Firebase initialization failed - check console";
+        document.body?.appendChild(notice);
+        setTimeout(() => notice.remove(), 8000);
+    }
+})();
