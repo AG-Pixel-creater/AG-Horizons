@@ -1,0 +1,29 @@
+name: Deploy and Replace Firebase Config
+
+on:
+  push:
+    branches: [ main ]   # ya jo bhi tumhari default branch ho
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Replace Firebase config placeholders with secrets
+        run: |
+          # Placeholders ko actual secret values se replace karo
+          sed -i "s|\${{ secrets.FIREBASE_API_KEY }}|${{ secrets.APIKEY }}|g" firebase-config.js
+          sed -i "s|\${{ secrets.FIREBASE_AUTH_DOMAIN }}|${{ secrets.AUTHDOMAIN }}|g" firebase-config.js
+          sed -i "s|\${{ secrets.FIREBASE_PROJECT_ID }}|${{ secrets.PROJECTID }}|g" firebase-config.js
+          sed -i "s|\${{ secrets.FIREBASE_STORAGE_BUCKET }}|${{ secrets.STORAGEBUCKET }}|g" firebase-config.js
+          sed -i "s|\${{ secrets.FIREBASE_MESSAGINGSENDERID }}|${{ secrets.MESSAGINGSENDERID }}|g" firebase-config.js
+          sed -i "s|\${{ secrets.FIREBASE_APP_ID }}|${{ secrets.APPID }}|g" firebase-config.js
+          sed -i "s|\${{ secrets.FIREBASE_MEASUREMENT_ID }}|${{ secrets.MEASUREMENTID }}|g" firebase-config.js
+
+      - name: Deploy to GitHub Pages (example)
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./   # ya jo folder deploy karna ho

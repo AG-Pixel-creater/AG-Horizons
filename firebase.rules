@@ -1,20 +1,8 @@
-// Combined Firebase security rules (Firestore + Storage)
-// This file contains both the Firestore and Storage rule sets for convenience.
-// Note: Firebase CLI typically expects `firestore.rules` and `storage.rules` separately
-// for deployment. Keep the separate files if you rely on automatic deploys, or
-// point your deploy tooling at this file if you prefer a combined source.
-
-// ---------------------- Firestore rules ----------------------
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Basic server-side content filtering. This helps prevent the most common
-    // forms of adult content from being written to public collections. This is
-    // an additional safeguard — keep client-side checks in place and consider
-    // adding a moderation workflow for edge cases.
-
-    // Blocklist (regex-ready): common porn/adult domains and keywords
+    // Blocklist functions
     function blockedKeywordRegex() {
       return '(?i)\\b(porn|pornhub|xvideos|xhamster|xnxx|redtube|youporn|pornography|porn.com|adult|xxx|escort|cam|hentai|nsfw|nude|erotic|sex)\\b';
     }
@@ -31,77 +19,59 @@ service cloud.firestore {
       return !(l is string && (l.matches(blockedDomainRegex()) || l.matches(blockedKeywordRegex())));
     }
 
-    // Websites collection: allow reads, but restrict writes containing blocked content
+    // Websites collection
     match /websites/{website} {
+      // TEMPORARY: allow public reads for development/testing
+      // Revert to `if request.auth != null` or enable Anonymous Auth in production
       allow read: if true;
-      allow create, update: if isCleanString(request.resource.data.website_title)
-                              && isCleanString(request.resource.data.website_description)
-                              && isCleanLink(request.resource.data.website_link);
-      allow delete: if false; // prevent accidental public deletes (change as needed)
+      allow create, update: if request.auth != null
+                            && isCleanString(request.resource.data.website_title)
+                            && isCleanString(request.resource.data.website_description)
+                            && isCleanLink(request.resource.data.website_link);
+      allow delete: if false;
     }
 
-    // Images collection: ensure image_url/title/description/title_link are clean
+    // Images collection
     match /images/{imageId} {
+      // TEMPORARY: allow public reads for development/testing
+      // Revert to `if request.auth != null` or enable Anonymous Auth in production
       allow read: if true;
-      allow create, update: if isCleanString(request.resource.data.title)
-                              && isCleanString(request.resource.data.description)
-                              && isCleanLink(request.resource.data.title_link)
-                              && !(request.resource.data.image_url is string && request.resource.data.image_url.matches(blockedDomainRegex()));
+      allow create, update: if request.auth != null
+                            && isCleanString(request.resource.data.title)
+                            && isCleanString(request.resource.data.description)
+                            && isCleanLink(request.resource.data.title_link)
+                            && !(request.resource.data.image_url is string && request.resource.data.image_url.matches(blockedDomainRegex()));
       allow delete: if false;
     }
 
-    // Videos collection: ensure video_url/title/description/title_link are clean
+    // Videos collection
     match /videos/{videoId} {
+      // TEMPORARY: allow public reads for development/testing
+      // Revert to `if request.auth != null` or enable Anonymous Auth in production
       allow read: if true;
-      allow create, update: if isCleanString(request.resource.data.title)
-                              && isCleanString(request.resource.data.description)
-                              && isCleanLink(request.resource.data.title_link)
-                              && !(request.resource.data.video_url is string && request.resource.data.video_url.matches(blockedDomainRegex()));
+      allow create, update: if request.auth != null
+                            && isCleanString(request.resource.data.title)
+                            && isCleanString(request.resource.data.description)
+                            && isCleanLink(request.resource.data.title_link)
+                            && !(request.resource.data.video_url is string && request.resource.data.video_url.matches(blockedDomainRegex()));
       allow delete: if false;
     }
 
-    // Legacy searchData collection: apply similar protections
+    // Legacy searchData collection
     match /searchData/{document} {
+      // TEMPORARY: allow public reads for development/testing
+      // Revert to `if request.auth != null` or enable Anonymous Auth in production
       allow read: if true;
-      allow create, update: if isCleanString(request.resource.data.title)
-                              && isCleanString(request.resource.data.description)
-                              && isCleanLink(request.resource.data.url);
+      allow create, update: if request.auth != null
+                            && isCleanString(request.resource.data.title)
+                            && isCleanString(request.resource.data.description)
+                            && isCleanLink(request.resource.data.url);
       allow delete: if false;
     }
 
     // Health check
     match /_health_check_/{document} {
-      allow read: if true;
-    }
-  }
-}
-
-// ---------------------- Storage rules ----------------------
-service firebase.storage {
-  match /b/{bucket}/o {
-    // Restrict writes that include obvious adult keywords in filenames and
-    // ensure content types are reasonable for their target (image/video).
-    match /{allPaths=**} {
-      allow read: if true;
-
-      // Deny writes if the path or filename contains blocked keywords
-      function blockedFilenameRegex() {
-        return '(?i)\\b(porn|pornhub|xvideos|xhamster|xnxx|redtube|youporn|pornography|porn.com|adult|xxx|escort|cam|hentai|nsfw|nude|erotic|sex)\\b';
-      }
-
-      allow write: if (
-        // Must have a content type on upload
-        request.resource != null
-        // refuse files with blocked keywords in path
-        && !(allPaths.matches(blockedFilenameRegex()))
-        && (
-          // images may have image content type
-          (request.resource.contentType.matches('image/.*'))
-          ||
-          // videos may have video content type
-          (request.resource.contentType.matches('video/.*'))
-        )
-      );
+      allow read: if request.auth != null;
     }
   }
 }

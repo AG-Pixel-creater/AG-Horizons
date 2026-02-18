@@ -6,6 +6,33 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>AG | Horizons - Search Results</title>
         <script>
+            // Global unhandled promise rejection handler - must be first
+            window.addEventListener('unhandledrejection', event => {
+                console.error('[Global unhandledrejection] Caught:', event.reason);
+                // MUST prevent default to stop Chrome from crashing message port
+                event.preventDefault();
+                return true;
+            });
+            
+            // Global error handler for any synchronous errors
+            window.addEventListener('error', event => {
+                console.error('[Global error] Caught:', event.error || event.message);
+                // Prevent default error handling to stop message port errors
+                event.preventDefault();
+                return true;
+            });
+            
+            // Also handle messages/script errors more broadly
+            if (window.self !== window.top) {
+                // In an iframe
+                window.addEventListener('message', (e) => {
+                    if (e.data && e.data.type === 'error') {
+                        console.error('[iframe message] Error:', e.data);
+                    }
+                }, false);
+            }
+        </script>
+        <script>
             // Apply saved theme early to avoid flash
             (function(){
                 try{
@@ -109,33 +136,49 @@
                 // toggle panel visibility
                 if(btn && panel){
                     btn.addEventListener('click', (e) => {
-                        const open = panel.style.display === 'block';
-                        panel.style.display = open ? 'none' : 'block';
-                        btn.setAttribute('aria-expanded', String(!open));
+                        try {
+                            const open = panel.style.display === 'block';
+                            panel.style.display = open ? 'none' : 'block';
+                            btn.setAttribute('aria-expanded', String(!open));
+                        } catch (err) {
+                            console.error('[settingsBtn click] Error:', err);
+                        }
                     });
                 }
 
                 // radio change handlers
                 if(darkRadio) darkRadio.addEventListener('change', () => {
-                    if(darkRadio.checked){
-                        applyTheme('dark');
-                        localStorage.setItem(THEME_KEY, 'dark');
+                    try {
+                        if(darkRadio.checked){
+                            applyTheme('dark');
+                            localStorage.setItem(THEME_KEY, 'dark');
+                        }
+                    } catch (e) {
+                        console.error('[darkRadio change] Error:', e);
                     }
                 });
                 if(lightRadio) lightRadio.addEventListener('change', () => {
-                    if(lightRadio.checked){
-                        applyTheme('light');
-                        localStorage.setItem(THEME_KEY, 'light');
+                    try {
+                        if(lightRadio.checked){
+                            applyTheme('light');
+                            localStorage.setItem(THEME_KEY, 'light');
+                        }
+                    } catch (e) {
+                        console.error('[lightRadio change] Error:', e);
                     }
                 });
 
                 // close panel on outside click
                 document.addEventListener('click', (e) => {
-                    if(!panel) return;
-                    if(panel.style.display !== 'block') return;
-                    if(e.target === panel || panel.contains(e.target) || e.target === btn) return;
-                    panel.style.display = 'none';
-                    if(btn) btn.setAttribute('aria-expanded', 'false');
+                    try {
+                        if(!panel) return;
+                        if(panel.style.display !== 'block') return;
+                        if(e.target === panel || panel.contains(e.target) || e.target === btn) return;
+                        panel.style.display = 'none';
+                        if(btn) btn.setAttribute('aria-expanded', 'false');
+                    } catch (err) {
+                        console.error('[document click] Error:', err);
+                    }
                 });
             })();
         </script>
@@ -156,16 +199,20 @@
                         });
                         // Also make a runtime hook for any scripts that add elements before our results renderer runs
                         const observer = new MutationObserver((mutations) => {
-                            for (const m of mutations) {
-                                for (const node of m.addedNodes) {
-                                    if (node && node.querySelectorAll) {
-                                        node.querySelectorAll('img[src*="default-thumbnail.png"]').forEach(img => {
-                                            try { img.src = placeholder; } catch(e) {}
-                                        });
-                                    } else if (node && node.tagName === 'IMG' && node.src && node.src.indexOf('default-thumbnail.png') !== -1) {
-                                        try { node.src = placeholder; } catch(e) {}
+                            try {
+                                for (const m of mutations) {
+                                    for (const node of m.addedNodes) {
+                                        if (node && node.querySelectorAll) {
+                                            node.querySelectorAll('img[src*="default-thumbnail.png"]').forEach(img => {
+                                                try { img.src = placeholder; } catch(e) {}
+                                            });
+                                        } else if (node && node.tagName === 'IMG' && node.src && node.src.indexOf('default-thumbnail.png') !== -1) {
+                                            try { node.src = placeholder; } catch(e) {}
+                                        }
                                     }
                                 }
+                            } catch (e) {
+                                console.warn('[defaultImageObserver] Error:', e);
                             }
                         });
                         observer.observe(document.documentElement || document.body, { childList: true, subtree: true });
@@ -213,21 +260,69 @@
                     botBtn.style.display = grid.scrollTop < (max - 8) ? 'flex' : 'none';
                 }
 
-                topBtn.addEventListener('click', ()=> grid.scrollBy({ top: -320, behavior: 'smooth' }));
-                botBtn.addEventListener('click', ()=> grid.scrollBy({ top: 320, behavior: 'smooth' }));
+                topBtn.addEventListener('click', ()=> {
+                    try {
+                        grid.scrollBy({ top: -320, behavior: 'smooth' });
+                    } catch (e) {
+                        console.error('[topBtn click] Error:', e);
+                    }
+                });
+                botBtn.addEventListener('click', ()=> {
+                    try {
+                        grid.scrollBy({ top: 320, behavior: 'smooth' });
+                    } catch (e) {
+                        console.error('[botBtn click] Error:', e);
+                    }
+                });
 
-                grid.addEventListener('scroll', updateButtons, { passive: true });
+                grid.addEventListener('scroll', () => {
+                    try {
+                        updateButtons();
+                    } catch (e) {
+                        console.error('[grid scroll] Error:', e);
+                    }
+                }, { passive: true });
 
                 // watch for content changes to update buttons and max-height
-                const mo = new MutationObserver(()=> { setTimeout(()=>{ setResultsMaxHeight(); updateButtons(); }, 60); });
+                const mo = new MutationObserver(()=> {
+                    try {
+                        setTimeout(()=> {
+                            try {
+                                setResultsMaxHeight();
+                                updateButtons();
+                            } catch (e) {
+                                console.error('[MutationObserver timeout] Error:', e);
+                            }
+                        }, 60);
+                    } catch (e) {
+                        console.error('[MutationObserver] Error:', e);
+                    }
+                });
                 mo.observe(grid, { childList: true, subtree: true });
 
-                window.addEventListener('resize', () => { setResultsMaxHeight(); updateButtons(); });
+                window.addEventListener('resize', () => {
+                    try {
+                        setResultsMaxHeight();
+                        updateButtons();
+                    } catch (e) {
+                        console.error('[window resize] Error:', e);
+                    }
+                });
 
                 // initial
-                setResultsMaxHeight();
+                try {
+                    setResultsMaxHeight();
+                } catch (e) {
+                    console.error('[initial setResultsMaxHeight] Error:', e);
+                }
                 // delay to allow results.js to render initial results
-                setTimeout(updateButtons, 300);
+                setTimeout(() => {
+                    try {
+                        updateButtons();
+                    } catch (e) {
+                        console.error('[delayed updateButtons] Error:', e);
+                    }
+                }, 300);
             })();
         </script>
 
